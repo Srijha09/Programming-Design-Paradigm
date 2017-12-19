@@ -1,0 +1,104 @@
+1. (SquashPractice1) 
+Your job is to build a simple simulation of a squash player practicing without an opponent.
+
+The simulation is a universe program that displays the positions and motions of a squash ball and the player's racket moving within a rectangular court.
+The court is 425 pixels wide and 649 pixels high. We use graphics coordinates in which the top leftmost pixel has coordinates (0,0). The court walls are displayed as a black outline, but the court's floor is displayed as a white background on which the ball and racket may be drawn.
+The ball is displayed as a black circle of radius 3 pixels. The racket is displayed as a green rectangle whose horizontal sides are 47 pixels long and whose vertical sides are 7 pixels long.
+The ball and racket are therefore displayed larger than scale. The simulation approximates the real-world dimensions and compressibility of the ball and racket by treating the ball as a point particle and the racket as a horizontal line segment with zero thickness. The ball's position corresponds to the center of its displayed circle, and the racket's position corresponds to the center of its displayed rectangle.
+The ball and racket each have their own velocity, with each velocity comprising two components vx and vy telling how many pixels the ball or racket moves on each tick in the x and y directions, respectively. (We are using graphics coordinates, so a positive value for vy means the ball or racket is moving downward.)
+The simulation starts in a ready-to-serve state, with the ball and racket both at graphics coordinates (330,384), both with zero velocity.
+When the simulation is in ready-to-serve state, pressing the space bar changes the simulation's overall state to a rally state, and changes the ball's velocity components to (3,-9).
+When the simulation is in a rally state, pressing the space bar pauses the simulation for three seconds of real time (which can be measured in ticks by using the speed of the simulation to calculate the number of ticks per second). During those three seconds, the ball and racket do not move, and the background color of the court changes from white to yellow. At the end of the three seconds, the simulation resets to its ready-to-serve state, and the background color to white, as though the simulation was just starting.
+When the simulation is in a rally state, the velocity of the racket can be changed by pressing the arrow keys:
+pressing the left arrow key decreases the vx component by 1
+pressing the right arrow key increases the vx component by 1
+pressing the up arrow key decreases the vy component by 1
+pressing the left down arrow key increases the vy component by 1
+The racket's vy velocity component can also change when the ball collides with the racket (see below). When the ball collides with the racket, and the racket's vy velocity component is negative, that vy component increases to zero. Otherwise the vy component remains unchanged.
+The velocity of the ball changes only when the ball collides with a wall of the court or with the racket. When the ball collides with the front (top) wall of the court, the vy component of its velocity is negated. When the ball collides with a side wall of the court, the vx component of its velocity is negated. When the ball collides with the racket (see below), the vx component of the ball's velocity stays the same but its vy component becomes the vx vy component of the racket's velocity minus the old vy component of the ball's velocity. These adjustments to the ball's velocity are made only following a tick.
+The ball collides with the racket if and only if the path of the ball during the tick intersects the 47-pixel line segment that represents the racket's position at the end of the tick.
+The ball collides with a wall if and only if the ball does not collide with the racket and the ball's tentative new position, obtained by adding the components of its previous velocity to the corresponding components of its previous position, lies outside the court. If the tentative y component is less than zero, then the ball has collided with the front wall, and its new y component will be the negation of its tentative y component. If the tentative x component is less than zero, then the ball has collided with the left wall, and its new x component will be the negation of its tentative x component. If the tentative x component is greater than 425, then the ball has collided with the right wall, and its new x component will be 425 minus the difference between tentative x component and 425.
+Note that it is possible for the ball to collide with more than one wall, so the x and y components computed above must themselves be regarded as tentative and subject to the same adjustments as described for the original tentative values of those components.
+The racket can also collide with a wall, and is deemed to have collided with a wall whenever its tentative new position, calculated by adding its velocity components to the corresponding components of its previous positions, results in any part of the 47-pixel line segment that represents the racket extending outside the court. If the racket collides with a side wall, its x component is adjusted to keep the racket touching the wall and inside the court. If the racket collides with the front wall, the rally state ends as though the space bar had been pressed.
+If the ball collides with the back wall, the rally state ends as though the space bar had been pressed.
+You are to deliver a file named q1.rkt that defines appropriate data types Ball, Racket, and World and defines and provides all 15 of the following functions:
+
+          ;;; simulation : PosReal -> World
+          ;;; GIVEN: the speed of the simulation, in seconds per tick
+          ;;;     (so larger numbers run slower)
+          ;;; EFFECT: runs the simulation, starting with the initial world
+          ;;; RETURNS: the final state of the world
+          ;;; EXAMPLES:
+          ;;;     (simulation 1) runs in super slow motion
+          ;;;     (simulation 1/24) runs at a more realistic speed
+          
+          ;;; initial-world : PosReal -> World
+          ;;; GIVEN: the speed of the simulation, in seconds per tick
+          ;;;     (so larger numbers run slower)
+          ;;; RETURNS: the ready-to-serve state of the world
+          ;;; EXAMPLE: (initial-world 1)
+          
+          ;;; world-ready-to-serve? : World -> Boolean
+          ;;; GIVEN: a world
+          ;;; RETURNS: true iff the world is in its ready-to-serve state
+          
+          ;;; world-after-tick : World -> World
+          ;;; GIVEN: any world that's possible for the simulation
+          ;;; RETURNS: the world that should follow the given world
+          ;;;     after a tick
+          
+          ;;; world-after-key-event : World KeyEvent -> World
+          ;;; GIVEN: a world and a key event
+          ;;; RETURNS: the world that should follow the given world
+          ;;;     after the given key event
+          
+          ;;; world-ball : World -> Ball
+          ;;; GIVEN: a world
+          ;;; RETURNS: the ball that's present in the world
+          
+          ;;; world-racket : World -> Racket
+          ;;; GIVEN: a world
+          ;;; RETURNS: the racket that's present in the world
+          
+          ;;; ball-x : Ball -> Integer
+          ;;; ball-y : Ball -> Integer
+          ;;; racket-x : Racket -> Integer
+          ;;; racket-y : Racket -> Integer
+          ;;; GIVEN: a racket or ball
+          ;;; RETURNS: the x or y coordinate of that item's position,
+          ;;;     in graphics coordinates
+          
+          ;;; ball-vx : Ball -> Integer
+          ;;; ball-vy : Ball -> Integer
+          ;;; racket-vx : Racket -> Integer
+          ;;; racket-vy : Racket -> Integer
+          ;;; GIVEN: a racket or ball
+          ;;; RETURNS: the vx or vy component of that item's velocity,
+          ;;;     in pixels per tick
+
+
+2. (SquashPractice2) 
+For this second problem, your job is to add Smooth Dragging, specified as follows:
+
+When the simulation is in a rally state, the racket becomes selectable and draggable. Depressing the mouse button when the mouse is positioned no more than 25 pixels away from the center of the racket selects and grabs the racket. The location of the mouse is indicated by a solid blue circle of radius 4 pixels; note that this circle might well lie completely outside the rectangle displaying the racket's position. Simply pressing the mouse button, without moving the mouse, should select the racket but should not move it.
+Once the racket has been selected, you should be able to drag it around the court using your mouse. As you drag the racket, the position of the mouse (as indicated by the solid blue circle) should not change relative to the racket's position.
+When the mouse button is released, the racket becomes unselected, and the blue circle disappears.
+When the simulation is in a ready-to-serve state, the racket is not selected and cannot be selected or dragged.
+You are to deliver a file named q2.rkt that defines appropriate data types Ball, Racket, and World, defines and provides all fifteen functions specified for the first question of this problem set, and also defines and provides the following three functions:
+
+          ;;; world-after-mouse-event
+          ;;;     : World Int Int MouseEvent -> World
+          ;;; GIVEN: a world, the x and y coordinates of a mouse event,
+          ;;;     and the mouse event
+          ;;; RETURNS: the world that should follow the given world after
+          ;;;     the given mouse event
+          
+          ;;; racket-after-mouse-event
+          ;;;     : Racket Int Int MouseEvent -> Racket
+          ;;; GIVEN: a racket, the x and y coordinates of a mouse event,
+          ;;;     and the mouse event
+          ;;; RETURNS: the racket as it should be after the given mouse event
+          
+          ;;; racket-selected? : Racket-> Boolean
+          ;;; GIVEN: a racket
+          ;;; RETURNS: true iff the racket is selected

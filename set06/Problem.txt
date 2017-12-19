@@ -1,0 +1,9 @@
+1. (ListPractice2) 
+Rewrite your q1.rkt program from Problem Set 04 to use higher-order functions instead of using recursions to traverse lists. Do this for all traversals in your program, not just in the deliverable functions. However, there may be functions in your program for which the use of higher-order functions is not possible or is not appropriate. Be prepared to defend your choices at codewalk.
+
+Provide the same functions as in Problem Set 04. Name your file q1.rkt, as in Problem Set 04.
+
+2. (SquashPractice4) 
+Rewrite your q2.rkt program from Problem Set 04 to use higher-order functions instead of using recursions to traverse lists. Do this for all traversals in your program, not just in the deliverable functions. However, there may be functions in your program for which the use of higher-order functions is not possible or is not appropriate. Be prepared to defend your choices at codewalk.
+
+Provide the same functions as in Problem Set 04. Name your file q2.rkt, as in Problem Set 04.

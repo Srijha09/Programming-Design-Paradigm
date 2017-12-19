@@ -1,0 +1,267 @@
+1. (Arithmetic Expressions) 
+For this first part of Problem Set 05, you will design data types that make it possible to represent arithmetic expressions such as x+(3*y). This first part of the problem set consists of nothing but routine data definitions and a few simple functions for creating and observing values of the data types you define. The functions you are asked to define should not have to do any non-trivial computations.
+
+The specific data types you must design and implement are:
+
+A Literal represents a real number.
+A Variable represents a name whose meaning will depend upon the context in which it appears.
+An Operation represents an arithmetic operation such as addition or division.
+A Call represents a function call.
+A Block represents a variable definition and an expression within which that variable may be used.
+An ArithmeticExpression is one of the following:
+Literal
+Variable
+Operation
+Call
+Block
+You are to deliver a file named q1.rkt that defines all of the data types named above and also defines and provides all 18 of the functions specified below.
+
+We are giving you two data definitions, for the itemization types OperationName and ArithmeticExpression. You should copy these data definitions into your q1.rkt file without changing them:
+
+          ;;; An OperationName is represented as one of the following strings:
+          ;;;     -- "+"      (indicating addition)
+          ;;;     -- "-"      (indicating subtraction)
+          ;;;     -- "*"      (indicating multiplication)
+          ;;;     -- "/"      (indicating division)
+          ;;;
+          ;;; OBSERVER TEMPLATE:
+          ;;; operation-name-fn : OperationName -> ??
+          #;
+          (define (operation-name-fn op)
+            (cond ((string=? op "+") ...)
+                  ((string=? op "-") ...)
+                  ((string=? op "*") ...)
+                  ((string=? op "/") ...)))
+          
+          ;;; An ArithmeticExpression is one of
+          ;;;     -- a Literal
+          ;;;     -- a Variable
+          ;;;     -- an Operation
+          ;;;     -- a Call
+          ;;;     -- a Block
+          ;;;
+          ;;; OBSERVER TEMPLATE:
+          ;;; arithmetic-expression-fn : ArithmeticExpression -> ??
+          #;
+          (define (arithmetic-expression-fn exp)
+            (cond ((literal? exp) ...)
+                  ((variable? exp) ...)
+                  ((operation? exp) ...)
+                  ((call? exp) ...)
+                  ((block? exp) ...)))
+The 18 functions you must define and provide are specified as follows:
+
+          ;;; lit : Real -> Literal
+          ;;; GIVEN: a real number
+          ;;; RETURNS: a literal that represents that number
+          ;;; EXAMPLE: (see the example given for literal-value,
+          ;;;          which shows the desired combined behavior
+          ;;;          of lit and literal-value)
+          
+          ;;; literal-value : Literal -> Real
+          ;;; GIVEN: a literal
+          ;;; RETURNS: the number it represents
+          ;;; EXAMPLE: (literal-value (lit 17.4)) => 17.4
+          
+          ;;; var : String -> Variable
+          ;;; GIVEN: a string
+          ;;; WHERE: the string begins with a letter and contains
+          ;;;     nothing but letters and digits
+          ;;; RETURNS: a variable whose name is the given string
+          ;;; EXAMPLE: (see the example given for variable-name,
+          ;;;          which shows the desired combined behavior
+          ;;;          of var and variable-name)
+          
+          ;;; variable-name : Variable -> String
+          ;;; GIVEN: a variable
+          ;;; RETURNS: the name of that variable
+          ;;; EXAMPLE: (variable-name (var "x15")) => "x15"
+          
+          ;;; op : OperationName -> Operation
+          ;;; GIVEN: the name of an operation
+          ;;; RETURNS: the operation with that name
+          ;;; EXAMPLES: (see the examples given for operation-name,
+          ;;;           which show the desired combined behavior
+          ;;;           of op and operation-name)
+          
+          ;;; operation-name : Operation -> OperationName
+          ;;; GIVEN: an operation
+          ;;; RETURNS: the name of that operation
+          ;;; EXAMPLES:
+          ;;;     (operation-name (op "+")) => "+"
+          ;;;     (operation-name (op "/")) => "/"
+          
+          ;;; call : ArithmeticExpression ArithmeticExpressionList -> Call
+          ;;; GIVEN: an operator expression and a list of operand expressions
+          ;;; RETURNS: a call expression whose operator and operands are as
+          ;;;     given
+          ;;; EXAMPLES: (see the examples given for call-operator and
+          ;;;           call-operands, which show the desired combined
+          ;;;           behavior of call and those functions)
+          
+          ;;; call-operator : Call -> ArithmeticExpression
+          ;;; GIVEN: a call
+          ;;; RETURNS: the operator expression of that call
+          ;;; EXAMPLE:
+          ;;;     (call-operator (call (op "-")
+          ;;;                          (list (lit 7) (lit 2.5))))
+          ;;;         => (op "-")
+          
+          ;;; call-operands : Call -> ArithmeticExpressionList
+          ;;; GIVEN: a call
+          ;;; RETURNS: the operand expressions of that call
+          ;;; EXAMPLE:
+          ;;;     (call-operands (call (op "-")
+          ;;;                          (list (lit 7) (lit 2.5))))
+          ;;;         => (list (lit 7) (lit 2.5))
+          
+          ;;; block : Variable ArithmeticExpression ArithmeticExpression
+          ;;;             -> ArithmeticExpression
+          ;;; GIVEN: a variable, an expression e0, and an expression e1
+          ;;; RETURNS: a block that defines the variable's value as the
+          ;;;     value of e0; the block's value will be the value of e1
+          ;;; EXAMPLES: (see the examples given for block-var, block-rhs,
+          ;;;           and block-body, which show the desired combined
+          ;;;           behavior of block and those functions)
+          
+          ;;; block-var : Block -> Variable
+          ;;; GIVEN: a block
+          ;;; RETURNS: the variable defined by that block
+          ;;; EXAMPLE:
+          ;;;     (block-var (block (var "x5")
+          ;;;                       (lit 5)
+          ;;;                       (call (op "*")
+          ;;;                             (list (var "x6") (var "x7")))))
+          ;;;         => (var "x5")
+          
+          ;;; block-rhs : Block -> ArithmeticExpression
+          ;;; GIVEN: a block
+          ;;; RETURNS: the expression whose value will become the value of
+          ;;;     the variable defined by that block
+          ;;; EXAMPLE:
+          ;;;     (block-rhs (block (var "x5")
+          ;;;                       (lit 5)
+          ;;;                       (call (op "*")
+          ;;;                             (list (var "x6") (var "x7")))))
+          ;;;         => (lit 5)
+          
+          ;;; block-body : Block -> ArithmeticExpression
+          ;;; GIVEN: a block
+          ;;; RETURNS: the expression whose value will become the value of
+          ;;;     the block expression
+          ;;; EXAMPLE:
+          ;;;     (block-body (block (var "x5")
+          ;;;                        (lit 5)
+          ;;;                        (call (op "*")
+          ;;;                              (list (var "x6") (var "x7")))))
+          ;;;         => (call (op "*") (list (var "x6") (var "x7")))
+          
+          ;;; literal?   : ArithmeticExpression -> Boolean
+          ;;; variable?  : ArithmeticExpression -> Boolean
+          ;;; operation? : ArithmeticExpression -> Boolean
+          ;;; call?      : ArithmeticExpression -> Boolean
+          ;;; block?     : ArithmeticExpression -> Boolean
+          ;;; GIVEN: an arithmetic expression
+          ;;; RETURNS: true if and only the expression is (respectively)
+          ;;;     a literal, variable, operation, call, or block
+          ;;; EXAMPLES:
+          ;;;     (variable? (block-body (block (var "y") (lit 3) (var "z"))))
+          ;;;         => true
+          ;;;     (variable? (block-rhs (block (var "y") (lit 3) (var "z"))))
+          ;;;         => false
+
+
+2. (Constant Expressions) 
+For this second problem, your job is to define several functions that classify and extract information from arithmetic expressions.
+
+We'll need the following definitions:
+
+An operation expression is an arithmetic expression that is either
+an Operation
+or a Block whose body is an operation expression.
+A constant expression is an arithmetic expression that is either
+a Literal,
+a Call whose operator is an operation expression and whose operands are all constant expressions,
+or a Block whose body is a constant expression.
+You are to deliver a file named q2.rkt that defines all of the data types and functions defined in part 1 above, and also defines and provides the 4 functions specified below:
+
+          ;;; variables-defined-by : ArithmeticExpression -> StringList
+          ;;; GIVEN: an arithmetic expression
+          ;;; RETURNS: a list of the names of all variables defined by
+          ;;;     all blocks that occur within the expression, without
+          ;;;     repetitions, in any order
+          ;;; EXAMPLE:
+          ;;;     (variables-defined-by
+          ;;;      (block (var "x")
+          ;;;             (var "y")
+          ;;;             (call (block (var "z")
+          ;;;                          (var "x")
+          ;;;                          (op "+"))
+          ;;;                   (list (block (var "x")
+          ;;;                                (lit 5)
+          ;;;                                (var "x"))
+          ;;;                         (var "x")))))
+          ;;;  => (list "x" "z") or (list "z" "x")
+          
+          ;;; variables-used-by : ArithmeticExpression -> StringList
+          ;;; GIVEN: an arithmetic expression
+          ;;; RETURNS: a list of the names of all variables used in
+          ;;;     the expression, including variables used in a block
+          ;;;     on the right hand side of its definition or in its body,
+          ;;;     but not including variables defined by a block unless
+          ;;;     they are also used
+          ;;; EXAMPLE:
+          ;;;     (variables-used-by
+          ;;;      (block (var "x")
+          ;;;             (var "y")
+          ;;;             (call (block (var "z")
+          ;;;                          (var "x")
+          ;;;                          (op "+"))
+          ;;;                   (list (block (var "x")
+          ;;;                                (lit 5)
+          ;;;                                (var "x"))
+          ;;;                         (var "x")))))
+          ;;;  => (list "x" "y") or (list "y" "x")
+          
+          ;;; constant-expression? : ArithmeticExpression -> Boolean
+          ;;; GIVEN: an arithmetic expression
+          ;;; RETURNS: true if and only if the expression is a constant
+          ;;;     expression
+          ;;; EXAMPLES:
+          ;;;     (constant-expression?
+          ;;;      (call (var "f") (list (lit -3) (lit 44))))
+          ;;;         => false
+          ;;;     (constant-expression?
+          ;;;      (call (op "+") (list (var "x") (lit 44))))
+          ;;;         => false
+          ;;;     (constant-expression?
+          ;;;      (block (var "x")
+          ;;;             (var "y")
+          ;;;             (call (block (var "z")
+          ;;;                          (call (op "*")
+          ;;;                                (list (var "x") (var "y")))
+          ;;;                          (op "+"))
+          ;;;                   (list (lit 3)
+          ;;;                         (call (op "*")
+          ;;;                               (list (lit 4) (lit 5)))))))
+          ;;;         => true
+          
+          ;;; constant-expression-value : ArithmeticExpression -> Real
+          ;;; GIVEN: an arithmetic expression
+          ;;; WHERE: the expression is a constant expression
+          ;;; RETURNS: the numerical value of the expression
+          ;;; EXAMPLES:
+          ;;;     (constant-expression-value
+          ;;;      (call (op "/") (list (lit 15) (lit 3))))
+          ;;;         => 5
+          ;;;     (constant-expression-value
+          ;;;      (block (var "x")
+          ;;;             (var "y")
+          ;;;             (call (block (var "z")
+          ;;;                          (call (op "*")
+          ;;;                                (list (var "x") (var "y")))
+          ;;;                          (op "+"))
+          ;;;                   (list (lit 3)
+          ;;;                         (call (op "*")
+          ;;;                               (list (lit 4) (lit 5)))))))
+          ;;;         => 23

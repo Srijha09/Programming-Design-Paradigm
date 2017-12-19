@@ -1,0 +1,217 @@
+This problem set asks you to implement two abstract data types, Player and RosterWithStream, and to write a main method that tests those data types. The Player ADT is the same as in Problem Set 10. The RosterWithStream ADT is similar to the Roster ADT of Problem Set 10, but it adds a stream() method and changes the return types of several other methods from Roster to RosterWithStream. (That is why RosterWithStream cannot just extend the Roster interface.)
+
+To make it easier to consider several similar rosters, the RosterWithStream ADT is immutable. The Player ADT is mutable, however, because an injury, trade, or some other change to a player's status should be propagated immediately to all rosters that use the player.
+
+      // A Player is an object of any class that implements the Player interface.
+      //
+      // A Player object represents a member of a team.
+      // Player objects are mutable because their status can change without
+      // changing the identity of the Player.
+      // 
+      // If p1 and p2 are players, then p1.equals(p2) if and only if
+      // p1 and p2 are the same object (i.e. (p1 == p2), p1 and p2
+      // have the same name and status, and changing the status of p1
+      // necessarily changes the status of p2 in the same way).
+      //
+      // If p is a player, then p.hashCode() always returns the same
+      // value, even after the player's status is changed by calling
+      // one of the last three methods listed below.
+      //
+      // If p1 and p2 are players with distinct names, then
+      // p1.toString() is not the same string as p2.toString().
+      //
+      // Players.make(String name) is a static factory method that returns
+      // a player with the given name who is (initially) available.
+      
+      interface Player {
+      
+          // Returns the name of this player.
+          // Example:
+          //     Players.make("Gordon Wayhard").name()  =>  "Gordon Wayhard"
+      
+          String name ();
+      
+          // Returns true iff this player is
+          //     under contract, and
+          //     not injured, and
+          //     not suspended
+          // Example:
+          //     Player gw = Players.make ("Gordon Wayhard");
+          //     System.out.println (gw.available());  // prints true
+          //     gw.changeInjuryStatus (true);
+          //     System.out.println (gw.available());  // prints false
+      
+          boolean available ();
+      
+          // Returns true iff this player is under contract (employed).
+          // Example:
+          //     Player ih = Players.make ("Isaac Homas");
+          //     System.out.println (ih.underContract());  // prints true
+          //     ih.changeContractStatus (false);
+          //     System.out.println (ih.underContract());  // prints false
+          //     ih.changeContractStatus (true);
+          //     System.out.println (ih.underContract());  // prints true
+      
+          boolean underContract ();
+      
+          // Returns true iff this player is injured.
+      
+          boolean isInjured ();
+      
+          // Returns true iff this player is suspended.
+      
+          boolean isSuspended ();
+      
+          // Changes the underContract() status of this player
+          // to the specified boolean.
+      
+          void changeContractStatus (boolean newStatus);
+      
+          // Changes the isInjured() status of this player
+          // to the specified boolean.
+      
+          void changeInjuryStatus (boolean newStatus);
+      
+          // Changes the isSuspended() status of this player
+          // to the specified boolean.
+      
+          void changeSuspendedStatus (boolean newStatus);
+      }
+      // A RosterWithStream is an object of any class that implements
+      // the RosterWithStream interface defined below.
+      //
+      // A RosterWithStream object represents a set of players.
+      //
+      // RosterWithStream objects are immutable, but all players on a
+      // RosterWithStream have mutable status, which can affect the
+      // values returned by the readyCount() and readyRoster() methods.
+      //
+      // If r is a RosterWithStream object, then
+      // r.iterator() generates the players of r in alphabetical order
+      //
+      // If r1 and r2 are RosterWithStream objects, then r1.equals(r2)
+      // if and only if
+      // every player on roster r1 is also on roster r2, and
+      // every player on roster r2 is also on roster r1.
+      //
+      // If r is a roster, then r.hashCode() always returns the same
+      // value, even if r has some players whose status changes.
+      //
+      // If r1 and r2 are rosters of different sizes, then
+      // r1.toString() is not the same string as r2.toString().
+      //
+      // RosterWithStreams.empty() is a static factory method that returns a
+      // RosterWithStream with no players.
+      
+      import java.util.stream.Stream;
+      
+      interface RosterWithStream extends Iterable<Player> {
+      
+          // Returns a roster consisting of the given player together
+          // with all players on this roster.
+          // Example:
+          //     r.with(p).with(p)  =>  r.with(p)
+      
+          RosterWithStream with (Player p);
+      
+          // Returns a roster consisting of all players on this roster
+          // except for the given player.
+          // Examples:
+          //     RosterWithStreams.empty().without(p)  =>  RosterWithStreams.empty()
+          //     r.without(p).without(p)     =>  r.without(p)
+      
+          RosterWithStream without (Player p);
+      
+          // Returns true iff the given player is on this roster.
+          // Examples:
+          //
+          //     RosterWithStreams.empty().has(p)  =>  false
+          //
+          // If r is any roster, then
+          //
+          //     r.with(p).has(p)     =>  true
+          //     r.without(p).has(p)  =>  false
+      
+          boolean has (Player p);
+      
+          // Returns the number of players on this roster.
+          // Examples:
+          //
+          //     RosterWithStreams.empty().size()  =>  0
+          //
+          // If r is a roster with r.size() == n, and r.has(p) is false, then
+          //
+          //     r.without(p).size()          =>  n
+          //     r.with(p).size()             =>  n+1
+          //     r.with(p).with(p).size()     =>  n+1
+          //     r.with(p).without(p).size()  =>  n
+      
+          int size ();
+      
+          // Returns the number of players on this roster whose current
+          // status indicates they are available.
+      
+          int readyCount ();
+      
+          // Returns a roster consisting of all players on this roster
+          // whose current status indicates they are available.
+      
+          RosterWithStream readyRoster ();
+      
+          // Returns an iterator that generates each player on this
+          // roster exactly once, in alphabetical order by name.
+      
+          Iterator<Player> iterator ();
+      
+          // Returns a sequential Stream with this RosterWithStream
+          // as its source.
+          // The result of this method generates each player on this
+          // roster exactly once, in alphabetical order by name.
+          // Examples:
+          //
+          //     RosterWithStreams.empty().stream().count()  =>  0
+          //
+          //     RosterWithStreams.empty().stream().findFirst().isPresent()
+          //         =>  false
+          //
+          //     RosterWithStreams.empty().with(p).stream().findFirst().get()
+          //         =>  p
+          //
+          //     this.stream().distinct()  =>  this.stream()
+          //
+          //     this.stream().filter((Player p) -> p.available()).count()
+          //         =>  this.readyCount()
+      
+          Stream<Player> stream ();
+      }
+
+
+1. (RosterWithStream) 
+For this first part of Problem Set 11, you will define a public class named Players in a file named Players.java and a public class named RosterWithStreams in a file named RosterWithStreams.java
+
+The Players class will define a public static factory method named make that takes a String as its one and only argument and returns a Player whose name is the given string.
+
+The RosterWithStreams class will define a public static factory method named empty that takes no arguments and returns an empty RosterWithStream.
+
+HINT: You will probably find it worth your time to read and to understand the official Java documentation for the stream methods of the java.util.stream.StreamSupport class. Those stream methods are static factory methods for creating Stream<T> objects. You might also benefit from knowing that any class that implements the Iterable<T> interface (or any interface that extends Iterable<T>) automatically defines a default spliterator() method that calls the iterator() method of that class and uses the Iterator<T> result of that call to create an analogous Spliterator<T>.
+
+
+2. (Testing) 
+For this second part of Problem Set 11, you will define a public class named TestRosterWithStream in a file named TestRosterWithStream.java. That class will define a public static main method that tests the code you wrote in part 1.
+
+Testing the stream method of the RosterWithStream ADT ought to involve testing all of the methods supported by the Stream<Player> objects that will be returned by that method. Some of those methods ought to be tested by more than one test. (The allMatch and anyMatch methods, for example, both ought to be tested in a situation for which they return true and in a situation for which they return false.)
+
+That could turn out to be a lot of testing. If you write beautiful code for part 1, making appropriate use of Java's pre-defined default methods, then some of that testing may be less important because any mistakes in the default methods will probably have the same root causes as mistakes that can be found by testing some of the more basic methods. Course staff will therefore give special attention to the tests you write for the following methods:
+
+          boolean       allMatch(Predicate<? super T> predicate)
+          boolean       anyMatch(Predicate<? super T> predicate)
+          long          count()
+          Stream<T>     distinct()
+          Stream<T>     filter(Predicate<? super T> predicate)
+          Optional<T>   findAny()
+          Optional<T>   findFirst()
+          void          forEach(Consumer<? super T> action)
+          <R> Stream<R> map(Function<? super T,? extends R> mapper)
+          T             reduce(T identity, BinaryOperator<T> accumulator)
+          Stream<T>     skip(long n)
+          Object[]      toArray()

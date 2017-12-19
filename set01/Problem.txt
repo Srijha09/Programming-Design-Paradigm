@@ -1,0 +1,9 @@
+1. Write a function named pyramid-volume that, given values x and h in units of meters, returns the volume in cubic meters of a pyramid of height h whose square bottom has sides of length x. (Hint: the volume of any pyramid is one third the area of its base times its height.) Put your solution in a file named q1.rkt.
+
+2. A few countries have not yet converted to the metric system. Write a function named furlongs-to-barleycorns that, given a length in furlongs, returns the number of barleycorns in that length. (Hint: one furlong is ten chains; one chain is four rods; one rod is sixteen and a half feet; one foot is twelve inches; one inch is three barleycorns. Put your solution in a file named q2.rkt.
+
+3. Write a function named kelvin-to-fahrenheit that, given a temperature in Kelvin, returns the number of Fahrenheit degrees. (Hint: 0 K is -273.15 degrees Celsius, and 273.15 K is 0 degrees Celsius.) Put your solution in a file named q3.rkt.
+
+4. For scientific applications, the speed of a microprocessor is often expressed as the number of floating point operations it can perform per second; one floating point operation per second equals 1 FLOPS. Write a function named flopy that, given the speed of a microprocessor in FLOPS, returns the number of floating point operations it can perform in one 365-day year, with each day consisting of exactly 24 hours. Put your solution in a file named q4.rkt.
+
+5. The Java type double consists of 264 distinct values, and double precision addition takes two of those values as inputs, so exhaustive testing of double precision addition involves 2128 additions. Write a function named years-to-test that, given the speed of a microprocessor in FLOPS, returns the number of 365-day years it would take to test the double precision addition operation on all legal inputs. Put your solution in a file named q5.rkt.

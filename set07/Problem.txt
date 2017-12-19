@@ -1,0 +1,116 @@
+1. (Undefined Variables) 
+For this first part of Problem Set 07, you will design a function named undefined-variables that checks an arithmetic expression to see whether all of its variables are defined and are used only within the region in which they are defined.
+
+Although the following sentences are taken from the current standard for the Scheme programming language, similar remarks apply to most of the programming languages you have used or will use during your career:
+
+To each place where an identifier is bound in a program there corresponds a region of the program text within which the binding is visible. The region is determined by the particular binding construct that establishes the binding; if the binding is established by a lambda expression, for example, then its region is the entire lambda expression. Every mention of an identifier refers to the binding of the identifier that established the innermost of the regions containing the use.
+In the language of arithmetic expressions, as introduced by Problem Set 05, blocks are the only binding constructs. When a variable is defined by a block, its region is the body of the block.
+
+Variables with the same name may be defined by more than block, so there may be more than one region corresponding to a variable with that name.
+
+If a variable is used within an arithmetic expression but at least one of its uses does not lie within any region established by a definition of the variable, then the variable is said to be undefined.
+
+You are to deliver a file named q1.rkt that
+
+defines all of the data types named in part 1 of Problem Set 05,
+including the OperationName and ArithmeticExpression types whose definitions we gave you,
+defines and provides all 18 of the functions specified in part 1 of Problem Set 05, with one change to the block function's contract: for Problem Set 07, block returns a Block,
+and defines and provides the undefined-variables function specified below.
+The 19 functions you must define and provide are:
+
+          ;;; lit : Real -> Literal
+          ;;; literal-value : Literal -> Real
+          ;;; var : String -> Variable
+          ;;; variable-name : Variable -> String
+          ;;; op : OperationName -> Operation
+          ;;; operation-name : Operation -> OperationName
+          ;;; call : ArithmeticExpression ArithmeticExpressionList -> Call
+          ;;; call-operator : Call -> ArithmeticExpression
+          ;;; call-operands : Call -> ArithmeticExpressionList
+          ;;; block : Variable ArithmeticExpression ArithmeticExpression
+          ;;;             -> Block
+          ;;; block-var : Block -> Variable
+          ;;; block-rhs : Block -> ArithmeticExpression
+          ;;; block-body : Block -> Block ArithmeticExpression
+          ;;; literal?   : ArithmeticExpression -> Boolean
+          ;;; variable?  : ArithmeticExpression -> Boolean
+          ;;; operation? : ArithmeticExpression -> Boolean
+          ;;; call?      : ArithmeticExpression -> Boolean
+          ;;; block?     : ArithmeticExpression -> Boolean
+          ;;;
+          ;;; (Those 18 functions are as specified in Problem Set 07,
+          ;;; except we have changed the return type of the
+          ;;; block function from ArithmeticExpression to Block.)
+          
+          ;;; undefined-variables : ArithmeticExpression -> StringList
+          ;;; GIVEN: an arbitrary arithmetic expression
+          ;;; RETURNS: a list of the names of all undefined variables
+          ;;;     for the expression, without repetitions, in any order
+          ;;; EXAMPLE:
+          ;;;     (undefined-variables
+          ;;;      (call (var "f")
+          ;;;            (list (block (var "x")
+          ;;;                         (var "x")
+          ;;;                         (var "x"))
+          ;;;                  (block (var "y")
+          ;;;                         (lit 7)
+          ;;;                         (var "y"))
+          ;;;                  (var "z"))))
+          ;;;  => some permutation of (list "f" "x" "z")
+For both questions in this set, you should review any code that you reuse from Problem Sets 05 and 06, repair any defects that were noted in your previous submissions, and improve your code where possible.
+
+
+2. (Type Checking) 
+For this second problem, your job is to write a type checker for arithmetic expressions.
+
+We'll need the following definitions:
+
+A type is one of
+Int
+Op0
+Op1
+Error
+The type of an arithmetic expression is defined as follows:
+The type of a Literal is Int
+If a Variable is used outside of any region for the variable, then the type of that use of the variable is Error; otherwise the type of that use of the variable is the type of the expression on the right hand side of the innermost definition of the variable whose region includes the use.
+The type of (op "+") is Op0.
+The type of (op "*") is Op0.
+The type of (op "-") is Op1.
+The type of (op "/") is Op1.
+If the operator of a call has type Op0, and all of its operands have type Int, then the type of the call is Int.
+If the operator of a call has type Op1, and all of its operands have type Int, and there is at least one operand, then the type of the call is Int.
+If neither of the two rules above specifies the type of a call, then its type is Error.
+If the right-hand side of a block's definition has type Error, then the type of that block is Error; otherwise the type of the block is the type of its body.
+An arithmetic expression is well-typed if and only if its type is not Error.
+You are to deliver a file named q2.rkt that defines all of the data types from part 1, defines and provides all 19 of the functions specified in part 1 above, and also defines and provides the well-typed? function specified below (so you will provide 20 functions in all):
+
+        ;;; well-typed? : ArithmeticExpression -> Boolean
+        ;;; GIVEN: an arbitrary arithmetic expression
+        ;;; RETURNS: true if and only if the expression is well-typed
+        ;;; EXAMPLES:
+        ;;;     (well-typed? (lit 17))  =>  true
+        ;;;     (well-typed? (var "x"))  =>  false
+        ;;;
+        ;;;     (well-typed?
+        ;;;      (block (var "f")
+        ;;;             (op "+")
+        ;;;             (block (var "x")
+        ;;;                    (call (var "f") (list))
+        ;;;                    (call (op "*")
+        ;;;                          (list (var "x"))))) => true
+        ;;;
+        ;;;     (well-typed?
+        ;;;      (block (var "f")
+        ;;;             (op "+")
+        ;;;             (block (var "f")
+        ;;;                    (call (var "f") (list))
+        ;;;                    (call (op "*")
+        ;;;                          (list (var "f"))))) => true
+        ;;;
+        ;;;     (well-typed?
+        ;;;      (block (var "f")
+        ;;;             (op "+")
+        ;;;             (block (var "x")
+        ;;;                    (call (var "f") (list))
+        ;;;                    (call (op "*")
+        ;;;                          (list (var "f"))))) => false

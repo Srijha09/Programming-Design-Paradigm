@@ -1,0 +1,88 @@
+1. (ListPractice1) 
+For this first part of Problem Set 04, you will not need to do any data design because the List data type, and all specific instances of that data type such as IntList and IntListList, are predefined by the lessons for Module 04.
+
+The inner product of two sequences of real numbers x1, ..., xn and y1, ..., yn is defined as the sum of the pairwise products of corresponding numbers; in standard mathematical notation: ∑i xi yi
+
+You are to deliver a file named q1.rkt that defines and provides all 4 of the following functions:
+
+          ;;; inner-product : RealList RealList -> Real
+          ;;; GIVEN: two lists of real numbers
+          ;;; WHERE: the two lists have the same length
+          ;;; RETURNS: the inner product of those lists
+          ;;; EXAMPLES:
+          ;;;     (inner-product (list 2.5) (list 3.0))  =>  7.5
+          ;;;     (inner-product (list 1 2 3 4) (list 5 6 7 8))  =>  70
+          ;;;     (inner-product (list) (list))  =>  0
+          
+          ;;; permutation-of? : IntList IntList -> Boolean
+          ;;; GIVEN: two lists of integers
+          ;;; WHERE: neither list contains duplicate elements
+          ;;; RETURNS: true if and only if one of the lists
+          ;;;     is a permutation of the other
+          ;;; EXAMPLES:
+          ;;;     (permutation-of? (list 1 2 3) (list 1 2 3)) => true
+          ;;;     (permutation-of? (list 3 1 2) (list 1 2 3)) => true
+          ;;;     (permutation-of? (list 3 1 2) (list 1 2 4)) => false
+          ;;;     (permutation-of? (list 1 2 3) (list 1 2)) => false
+          ;;;     (permutation-of? (list) (list)) => true
+          
+          ;;; shortlex-less-than? : IntList IntList -> Boolean
+          ;;; GIVEN: two lists of integers
+          ;;; RETURNS: true if and only either
+          ;;;     the first list is shorter than the second
+          ;;;  or both are non-empty, have the same length, and either
+          ;;;         the first element of the first list is less than
+          ;;;             the first element of the second list
+          ;;;      or the first elements are equal, and the rest of
+          ;;;             the first list is less than the rest of the
+          ;;;             second list according to shortlex-less-than?
+          ;;; EXAMPLES:
+          ;;;     (shortlex-less-than? (list) (list)) => false
+          ;;;     (shortlex-less-than? (list) (list 3)) => true
+          ;;;     (shortlex-less-than? (list 3) (list)) => false
+          ;;;     (shortlex-less-than? (list 3) (list 3)) => false
+          ;;;     (shortlex-less-than? (list 3) (list 1 2)) => true
+          ;;;     (shortlex-less-than? (list 3 0) (list 1 2)) => false
+          ;;;     (shortlex-less-than? (list 0 3) (list 1 2)) => true
+          
+          ;;; permutations : IntList -> IntListList
+          ;;; GIVEN: a list of integers
+          ;;; WHERE: the list contains no duplicates
+          ;;; RETURNS: a list of all permutations of that list,
+          ;;;     in shortlex order
+          ;;; EXAMPLES:
+          ;;;     (permutations (list))  =>  (list (list))
+          ;;;     (permutations (list 9))  =>  (list (list 9))
+          ;;;     (permutations (list 3 1 2))
+          ;;;         =>  (list (list 1 2 3)
+          ;;;                   (list 1 3 2)
+          ;;;                   (list 2 1 3)
+          ;;;                   (list 2 3 1)
+          ;;;                   (list 3 1 2)
+          ;;;                   (list 3 2 1))
+
+
+2. (SquashPractice3) 
+For this second problem, your job is to improve the simulation specified by Problem Set 03 by changing the definition of ball-racket collisions and by adding a new feature that allows expert squash players to challenge themselves by trying to keep multiple balls in play at once.
+
+To make it easier to keep multiple balls in play, the definition of a collision between ball and racket is changed to:
+
+The ball collides with the racket if and only if all of the following are true:
+The ball's position in the previous tick does not lie on the 47-pixel line segment of the racket in the previous tick.
+The vy component of the ball's tentative velocity is either zero or negative positive.
+The line that connects the ball's position in the previous tick with the first tentative position calculated for the ball in this tick intersects the 47-pixel line segment that represents the racket's new position for this tick.
+The other changes are:
+
+When the simulation is in a rally state, pressing the b key creates a new ball with position components (330,384) and velocity components (3,-9). This new ball behaves like the original ball, as specified by Problem Set 03.
+When the simulation is not in a rally state, pressing the b key does nothing.
+If a ball collides with the back wall, it disappears from the simulation. If its disappearance leaves no more balls within the simulation, the rally state ends as though the space bar had been pressed. The rally state does not end until all balls have disappeared or the space bar is pressed.
+Balls never collide with each other, even if they have the same position coordinates. (In the three-dimensional real-world, two balls with the same x and y components are likely to be at different altitudes, which your simulation does not model.)
+As in Problem Set 03, there is initially one ball, both in the ready-to-serve state and in the rally state.
+
+You are to deliver a file named q2.rkt that defines appropriate data types Ball, Racket, and World, defines and provides the fifteen functions specified in part 1 of Problem Set 03 except for world-ball, defines and provides all three functions specified in part 2 of Problem Set 03, and also defines and provides the world-balls function specified below:
+
+          ;;; world-balls : World -> BallList
+          ;;; GIVEN: a world
+          ;;; RETURNS: a list of the balls that are present in the world
+          ;;;     (but does not include any balls that have disappeared
+          ;;;     by colliding with the back wall)

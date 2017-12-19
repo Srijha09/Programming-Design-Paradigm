@@ -1,0 +1,137 @@
+This problem set deals with the problem of ranking individuals or teams in a sport such as chess whose contests result in a win or tie (draw).
+
+Unlike most ranking systems, the ranking system you will implement treats a tie as a win for both competitors and also as a loss for both competitors. (This problem set may help to explain why most ranking systems don't do that.)
+
+We will use strings to name competitors:
+
+      ;;; A Competitor is represented as a String (any string will do).
+
+1. (Outranking) 
+For this first part of Problem Set 08, you will design data types named Tie and Defeat. A Tie represents a tie (draw) between two competitors. A Defeat represents the outcome of a contest in which one competitor wins and the other loses. The outcome of a contest is either a Tie or a Defeat:
+
+          ;;; An Outcome is one of
+          ;;;     -- a Tie
+          ;;;     -- a Defeat
+          ;;;
+          ;;; OBSERVER TEMPLATE:
+          ;;; outcome-fn : Outcome -> ??
+          #;
+          (define (outcome-fn o)
+            (cond ((tie? o) ...)
+                  ((defeat? o) ...)))
+The ranking system specified below uses this definition:
+
+Given a list of outcomes, a competitor A outranks a competitor B if any of the following are true:
+
+One of the outcomes shows that A has defeated B.
+One of the outcomes shows that A and B have tied.
+There is a competitor C that outranks B according to the list of outcomes, and there is an outcome that shows A has defeated or tied C.
+You are to deliver a file named q1.rkt that
+
+defines the Competitor, Tie, Defeat, and Outcome types; the Competitor and Outcome types must be defined as shown above
+defines and provides all 5 of the functions specified below
+gives halting measures for all functions that may call themselves directly or indirectly
+The 5 functions you must define and provide are:
+
+          ;;; tie : Competitor Competitor -> Tie
+          ;;; GIVEN: the names of two competitors
+          ;;; RETURNS: an indication that the two competitors have
+          ;;;     engaged in a contest, and the outcome was a tie
+          ;;; EXAMPLE: (see the examples given below for defeated?,
+          ;;;     which shows the desired combined behavior of tie
+          ;;;     and defeated?)
+          ;;;
+          ;;; defeated : Competitor Competitor -> Defeat
+          ;;; GIVEN: the names of two competitors
+          ;;; RETURNS: an indication that the two competitors have
+          ;;;     engaged in a contest, with the first competitor
+          ;;;     defeating the second
+          ;;; EXAMPLE: (see the examples given below for defeated?,
+          ;;;     which shows the desired combined behavior of defeated
+          ;;;     and defeated?)
+          ;;;
+          ;;; defeated? : Competitor Competitor OutcomeList -> Boolean
+          ;;; GIVEN: the names of two competitors and a list of outcomes
+          ;;; RETURNS: true if and only if one or more of the outcomes indicates
+          ;;;     the first competitor has defeated or tied the second
+          ;;; EXAMPLES:
+          ;;;     (defeated? "A" "B" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => true
+          ;;;
+          ;;;     (defeated? "A" "C" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => false
+          ;;;
+          ;;;     (defeated? "B" "A" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => false
+          ;;;
+          ;;;     (defeated? "B" "C" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => true
+          ;;;
+          ;;;     (defeated? "C" "B" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => true
+          ;;;
+          ;;; outranks : Competitor OutcomeList -> CompetitorList
+          ;;; GIVEN: the name of a competitor and a list of outcomes
+          ;;; RETURNS: a list of the competitors outranked by the given
+          ;;;     competitor, in alphabetical order
+          ;;; NOTE: it is possible for a competitor to outrank itself
+          ;;; EXAMPLES:
+          ;;;     (outranks "A" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => (list "B" "C")
+          ;;;
+          ;;;     (outranks "B" (list (defeated "A" "B") (defeated "B" "A")))
+          ;;;  => (list "A" "B")
+          ;;;
+          ;;;     (outranks "C" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => (list "B" "C")
+          ;;;
+          ;;; outranked-by : Competitor OutcomeList -> CompetitorList
+          ;;; GIVEN: the name of a competitor and a list of outcomes
+          ;;; RETURNS: a list of the competitors that outrank the given
+          ;;;     competitor, in alphabetical order
+          ;;; NOTE: it is possible for a competitor to outrank itself
+          ;;; EXAMPLES:
+          ;;;     (outranked-by "A" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => (list)
+          ;;;
+          ;;;     (outranked-by "B" (list (defeated "A" "B") (defeated "B" "A")))
+          ;;;  => (list "A" "B")
+          ;;;
+          ;;;     (outranked-by "C" (list (defeated "A" "B") (tie "B" "C")))
+          ;;;  => (list "A" "B" "C")
+
+
+2.(Power Ranking) 
+For this second problem, your job is to implement a power-ranking system based on the types and functions you defined in part 1.
+
+Given a list of outcomes, the non-losing percentage of a competitor A is the number of outcomes in which A defeats or ties another competitor divided by the number of outcomes that mention A.
+
+The power-ranking system you will implement has the following characteristics:
+
+If competitor A is outranked by fewer competitors than competitor B, then the power-ranking of A is higher than the power-ranking of B.
+If competitor A is outranked by the same number of competitors as competitor B, but competitor A outranks more competitors than competitor B, then the power-ranking of A is higher than the power-ranking of B.
+If competitor A is outranked by the same number of competitors as competitor B, and competitor A also outranks the same number of competitors as competitor B, and competitor A has a higher non-losing percentage than competitor B, then the power-ranking of A is higher than the power-ranking of B.
+If competitor A is outranked by the same number of competitors as competitor B, and competitor A also outranks the same number of competitors as competitor B, and competitor A has the same non-losing percentage as competitor B, and Racket's string<? function considers the name of competitor A to be less than the name of competitor B, then the power-ranking of A is higher than the power-ranking of B.
+You are to deliver a file named q2.rkt that defines all of the data types from part 1, defines and provides all 5 of the functions specified in part 1 above, and also defines and provides the power-ranking function specified below (so you will provide 6 functions in all). As in part 1, you are to give halting measures for all functions that may call themselves directly or indirectly.
+
+          ;;; power-ranking : OutcomeList -> CompetitorList
+          ;;; GIVEN: a list of outcomes
+          ;;; RETURNS: a list of all competitors mentioned by one or more
+          ;;;     of the outcomes, without repetitions, with competitor A
+          ;;;     coming before competitor B in the list if and only if
+          ;;;     the power-ranking of A is higher than the power ranking
+          ;;;     of B.
+          ;;; EXAMPLE:
+          ;;;     (power-ranking
+          ;;;      (list (defeated "A" "D")
+          ;;;            (defeated "A" "E")
+          ;;;            (defeated "C" "B")
+          ;;;            (defeated "C" "F")
+          ;;;            (tie "D" "B")
+          ;;;            (defeated "F" "E")))
+          ;;;  => (list "C"   ; outranked by 0, outranks 4
+          ;;;           "A"   ; outranked by 0, outranks 3
+          ;;;           "F"   ; outranked by 1
+          ;;;           "E"   ; outranked by 3
+          ;;;           "B"   ; outranked by 4, outranks 2, 50%
+          ;;;           "D")  ; outranked by 4, outranks 2, 50%
